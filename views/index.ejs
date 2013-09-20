@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
+  	<title>Prank Howe!</title>
     <script type="text/javascript" src="/socket.io/socket.io.js">
     </script>
 
   </head>
   <body>
-  	<h2>Freeborn Chat</h2>
+  	<h2 id="title">Freeborn Chat (0.0.2)</h2>
   	<span id="nameForm">
   		<form onsubmit="setName(); return false;">
   			Enter your name: <input id="nick" type="text" placeholder="Name.."><br>
@@ -53,9 +54,8 @@
 		});
 		var setName = function() {
 			var pass = prompt("Enter the secret phrase: ", "");
-			var name = nick.value;
-			//var secret = secret.value;
-			if (name == '' || pass != '') {
+			var name = nick.value;;
+			if (name == '' || pass != 'hashtagyolo') {
 				document.body.innerHTML = '<h1>Why are you even here?</h1>';
 			} else {
 				msgForm.style.display = 'block';
@@ -69,11 +69,12 @@
 						chatBox.innerHTML = html;
 					}
 				});
+				title.innerHTML = 'Prank Howe!';
 				nameForm.innerHTML = 'Name: ' + helper.bold(name);
 				field.focus();
 				socket.emit('send', {message: helper.bold(name) + ' has joined the chat.'});
+				socket.emit('join', {name: name});
 			}
-			socket.emit('join', {name: name});
 		}
 		var sendMsg = function() {
 			var msg = field.value;
