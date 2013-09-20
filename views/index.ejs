@@ -89,7 +89,7 @@
 		window.addEventListener('beforeunload', function(event) {
 			var name = nick.value;
 			socket.emit('send', {message: helper.bold(name) + ' has disconnected.'})
-        	socket.emit('userDisconnect', {name: name});
+        	//socket.emit('userDisconnect', {name: name});
       	});
 	</script>
   </body>
