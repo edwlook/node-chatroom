@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="/socket.io/socket.io.js">
+    </script>
+
+  </head>
+  <body>
+  	<h2>Freeborn Chat</h2>
+  	<span id="nameForm">
+  		<form onsubmit="setName(); return false;">
+  			Enter your name: <input id="nick" type="text" placeholder="Name.."><br>
+  		
+  		</form>	
+  	</span>
+  	<span id="msgForm" style="display:none">
+		<form onsubmit="sendMsg(); return false;">
+			<input id="field" type="text" placeholder="Your message..">
+			<input type="submit" id="msgButton" value="Send"><br>
+		</form>
+		<br><span id="message"></span>
+	</span>
+  	    
+
+	<script type="text/javascript">
+		var helper = {
+			bold: function(str) {return '<b>' + str + '</b>';}
+		}
+		var socket = io.connect();
+		var nameForm = document.getElementById('nameForm');
+		var msgForm = document.getElementById('msgForm');
+		//var secret = document.getElementById('secret');
+		var chatBox = document.getElementById('message');
+		var msgButton = document.getElementById('msgButton');
+		var nick = document.getElementById('nick');
+		var field = document.getElementById('field');
+		nick.focus();
+		var messages = [];
+		
+		var setName = function() {
+			var pass = prompt("Enter the secret phrase: ", "");
+			var name = nick.value;
+			//var secret = secret.value;
+			if (name == '' || pass != 'hashtagyolo') {
+				document.body.innerHTML = '<h1>Why are you even here?</h1>';
+			} else {
+				msgForm.style.display = 'block';
+				socket.on('message', function (data) {
+					if (data.message) {
+						messages.push(data.message);
+						var html = '';
+						for (var i=0; i<messages.length; i++) {
+					    	html += messages[i] + '<br />';
+						}
+						chatBox.innerHTML = html;
+					}
+				});
+				nameForm.innerHTML = 'Name: ' + helper.bold(name);
+				field.focus();
+				socket.emit('send', {message: helper.bold(name) + ' has joined the chat.'});
+			}
+		}
+		var sendMsg = function() {
+			var msg = field.value;
+			var name = nick.value;
+			if (name == '') {
+				alert('Please enter a name!');
+			} else {
+				socket.emit('send', {message: helper.bold(name) + ': ' + msg});
+				field.value = '';
+			}
+		}
+	</script>
+  </body>
+</html>
