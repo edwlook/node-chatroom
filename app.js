@@ -46,15 +46,16 @@ io.sockets.on('connection', function (socket) {
         io.sockets.emit('message', data);
     });
     socket.on('join', function(data) {
+    	socket.name = data.name;
     	online.push(data.name);
     	io.sockets.emit('updateOnline', online);
     });
-    socket.on('userDisconnect', function(data) {
-    	var i = online.indexOf(data.name);
+    socket.on('disconnect', function() {
+    	var i = online.indexOf(socket.name);
     	if (i > -1) {
     		online.splice(i, 1);
 		}
-		io.sockets.emit('message', {message: data.name + ' left.'});
+		io.sockets.emit('message', {message: socket.name + ' left.'});
     	io.sockets.emit('updateOnline', online);
     });
 });

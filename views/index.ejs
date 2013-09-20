@@ -28,7 +28,9 @@
 		var helper = {
 			bold: function(str) {return '<b>' + str + '</b>';}
 		}
-		var socket = io.connect();
+		var socket = io.connect(window.location.origin, {
+			'sync disconnect on unload': true
+		});
 		var online = document.getElementById('online');
 		var nameForm = document.getElementById('nameForm');
 		var msgForm = document.getElementById('msgForm');
@@ -86,11 +88,11 @@
 				field.value = '';
 			}
 		}
-		window.addEventListener('beforeunload', function(event) {
-			var name = nick.value;
-			//socket.emit('send', {message: helper.bold(name) + ' has disconnected.'})
-        	socket.emit('userDisconnect', {name: name});
-      	});
+		// window.addEventListener('beforeunload', function(event) {
+		// 	var name = nick.value;
+		// 	//socket.emit('send', {message: helper.bold(name) + ' has disconnected.'})
+  //       	socket.emit('disconnect', {name: name});
+  //     	});
 	</script>
   </body>
 </html>
