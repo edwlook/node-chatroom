@@ -55,8 +55,11 @@ io.sockets.on('connection', function (socket) {
     	if (i > -1) {
     		online.splice(i, 1);
 		}
-		io.sockets.emit('message', {message: socket.name + ' left.'});
+		io.sockets.emit('message', {message: '<b>' + socket.name + '</b>' + ' has disconnected.'});
     	io.sockets.emit('updateOnline', online);
+    });
+    socket.on('newMessage', function() {
+    	io.sockets.emit('playSound');
     });
 });
 

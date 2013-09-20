@@ -9,7 +9,7 @@
   <body>
   	<h2 id="title">Freeborn Chat (0.0.2)</h2>
   	<span id="nameForm">
-  		<form onsubmit="setName(); return false;">
+  		<form onsubmit="join(); return false;">
   			Enter your name: <input id="nick" type="text" placeholder="Name.."><br>
   		
   		</form>	
@@ -34,11 +34,11 @@
 		var online = document.getElementById('online');
 		var nameForm = document.getElementById('nameForm');
 		var msgForm = document.getElementById('msgForm');
-		//var secret = document.getElementById('secret');
 		var chatBox = document.getElementById('message');
 		var msgButton = document.getElementById('msgButton');
 		var nick = document.getElementById('nick');
 		var field = document.getElementById('field');
+		var sound = new Audio('/sound/chat.mp3');
 		nick.focus();
 		var messages = [];
 		
@@ -52,9 +52,13 @@
 					}
 				});
 			online.innerHTML = html;
-
 		});
-		var setName = function() {
+
+		socket.on('playSound', function() {
+			sound.play();
+		});
+
+		var join = function() {
 			var pass = prompt("Enter the secret phrase: ", "");
 			var name = nick.value;;
 			if (name == '' || pass != 'hashtagyolo') {
@@ -79,6 +83,7 @@
 			}
 		}
 		var sendMsg = function() {
+			socket.emit('newMessage');
 			var msg = field.value;
 			var name = nick.value;
 			if (name == '') {
@@ -88,11 +93,7 @@
 				field.value = '';
 			}
 		}
-		// window.addEventListener('beforeunload', function(event) {
-		// 	var name = nick.value;
-		// 	//socket.emit('send', {message: helper.bold(name) + ' has disconnected.'})
-  //       	socket.emit('disconnect', {name: name});
-  //     	});
+
 	</script>
   </body>
 </html>
