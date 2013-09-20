@@ -33,10 +33,23 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 
+var online = [];
+
 io.sockets.on('connection', function (socket) {
     //socket.emit('message', { message: 'Welcome to the chat' });
     socket.on('send', function (data) {
         io.sockets.emit('message', data);
+    });
+    socket.on('join', function(data) {
+    	online.push(data.name);
+    	io.sockets.emit('updateOnline', online);
+    });
+    socket.on('userDisconnect', function(data) {
+    	var i = online.indexOf(data.name);
+    	if (i > -1) {
+    		online.splice(i, 1);
+		}
+    	io.sockets.emit('updateOnline', online);
     });
 });
 

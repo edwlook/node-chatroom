@@ -14,7 +14,8 @@
   		</form>	
   	</span>
   	<span id="msgForm" style="display:none">
-		<form onsubmit="sendMsg(); return false;">
+  		Online: <span id="online"></span>
+  			<form onsubmit="sendMsg(); return false;">
 			<input id="field" type="text" placeholder="Your message..">
 			<input type="submit" id="msgButton" value="Send"><br>
 		</form>
@@ -27,6 +28,7 @@
 			bold: function(str) {return '<b>' + str + '</b>';}
 		}
 		var socket = io.connect();
+		var online = document.getElementById('online');
 		var nameForm = document.getElementById('nameForm');
 		var msgForm = document.getElementById('msgForm');
 		//var secret = document.getElementById('secret');
@@ -37,11 +39,23 @@
 		nick.focus();
 		var messages = [];
 		
+		socket.on('updateOnline', function(data) {
+			var html = '';
+				data.forEach(function(el) {
+					if (el == data[data.length-1]) {
+						html += el;
+					} else {
+						html += el + ', ';
+					}
+				});
+			online.innerHTML = html;
+
+		});
 		var setName = function() {
 			var pass = prompt("Enter the secret phrase: ", "");
 			var name = nick.value;
 			//var secret = secret.value;
-			if (name == '' || pass != 'hashtagyolo') {
+			if (name == '' || pass != '') {
 				document.body.innerHTML = '<h1>Why are you even here?</h1>';
 			} else {
 				msgForm.style.display = 'block';
@@ -59,6 +73,7 @@
 				field.focus();
 				socket.emit('send', {message: helper.bold(name) + ' has joined the chat.'});
 			}
+			socket.emit('join', {name: name});
 		}
 		var sendMsg = function() {
 			var msg = field.value;
@@ -70,6 +85,11 @@
 				field.value = '';
 			}
 		}
+		window.addEventListener('beforeunload', function(event) {
+			var name = nick.value;
+			socket.emit('send', {message: helper.bold(name) + ' has disconnected.'})
+        	socket.emit('userDisconnect', {name: name});
+      	});
 	</script>
   </body>
 </html>
