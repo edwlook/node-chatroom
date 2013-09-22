@@ -33,7 +33,12 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 
+//Socket.io
+/******************************************************/
 var online = [];
+var users = {};
+var pass = '';
+if (process.argv[2] == 'prod') {pass = 'hashtagyolo'}
 
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
@@ -45,8 +50,18 @@ io.sockets.on('connection', function (socket) {
     socket.on('send', function (data) {
         io.sockets.emit('message', data);
     });
+    socket.on('auth', function(data) {
+    	users[data.name] = socket.id;
+    	var client = users[data.name];
+    	if (data.pass == pass) {
+    		io.sockets.socket(client).emit('authSuccess');
+    	} else {
+    		io.sockets.socket(client).emit('authFail');
+    	}
+    });
     socket.on('join', function(data) {
     	socket.name = data.name;
+    	users[data.name] = socket;
     	online.push(data.name);
     	io.sockets.emit('updateOnline', online);
     });

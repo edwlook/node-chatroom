@@ -7,9 +7,9 @@
 
   </head>
   <body>
-  	<h2 id="title">Freeborn Chat (0.0.2)</h2>
+  	<h2 id="title">Freeborn Chat (0.0.3)</h2>
   	<span id="nameForm">
-  		<form onsubmit="join(); return false;">
+  		<form onsubmit="auth(); return false;">
   			Enter your name: <input id="nick" type="text" placeholder="Name.."><br>
   		
   		</form>	
@@ -25,6 +25,7 @@
   	    
 
 	<script type="text/javascript">
+
 		var helper = {
 			bold: function(str) {return '<b>' + str + '</b>';}
 		}
@@ -41,7 +42,7 @@
 		var sound = new Audio('/sound/chat.mp3');
 		nick.focus();
 		var messages = [];
-		
+
 		socket.on('updateOnline', function(data) {
 			var html = '';
 				data.forEach(function(el) {
@@ -58,30 +59,45 @@
 			sound.play();
 		});
 
-		var join = function() {
+		var auth = function() {
+			var name = nick.value;
 			var pass = prompt("Enter the secret phrase: ", "");
-			var name = nick.value;;
-			if (name == '' || pass != 'hashtagyolo') {
-				document.body.innerHTML = '<h1>Why are you even here?</h1>';
-			} else {
-				msgForm.style.display = 'block';
-				socket.on('message', function (data) {
-					if (data.message) {
-						messages.push(data.message);
-						var html = '';
-						for (var i=0; i<messages.length; i++) {
-					    	html += messages[i] + '<br />';
-						}
-						chatBox.innerHTML = html;
+			socket.emit('auth', {pass: pass, name: name});
+		};
+
+		socket.on('authSuccess', function() {
+			join();
+			socket.on('message', function (data) {
+				if (data.message) {
+					messages.push(data.message);
+					var html = '';
+					for (var i=0; i<messages.length; i++) {
+				    	html += messages[i] + '<br />';
 					}
-				});
+					chatBox.innerHTML = html;
+				}
+			});
+		});
+
+		socket.on('authFail', function() {
+			document.body.innerHTML = "<h1>You shouldn't be here.</h1>";
+			window.setTimeout(function() {
+				window.location = "http://www.google.com";
+			}, 3000)
+		});
+		var join = function() {
+			// if (name == '' || pass != 'hashtagyolo') {
+			// 	document.body.innerHTML = '<h1>Why are you even here?</h1>';
+			// } else {
+				var name = nick.value;
+				msgForm.style.display = 'block';
 				title.innerHTML = 'Prank Howe!';
 				nameForm.innerHTML = 'Name: ' + helper.bold(name);
 				field.focus();
 				socket.emit('send', {message: helper.bold(name) + ' has joined the chat.'});
 				socket.emit('join', {name: name});
-			}
-		}
+			// }
+		};
 		var sendMsg = function() {
 			socket.emit('newMessage');
 			var msg = field.value;
@@ -92,7 +108,7 @@
 				socket.emit('send', {message: helper.bold(name) + ': ' + msg});
 				field.value = '';
 			}
-		}
+		};
 
 	</script>
   </body>
