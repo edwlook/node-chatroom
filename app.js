@@ -48,12 +48,11 @@ io.configure(function () {
 });
 
 io.sockets.on('connection', function (socket) {
-    //socket.emit('message', { message: 'Welcome to the chat' });
+    var client = socket.id;
     socket.on('send', function (data) {
         io.sockets.emit('message', data);
     });
     socket.on('auth', function(data) {
-        var client = socket.id;
     	if (data.pass === pass) {
             users[data.name] = socket.id;
             socket.name = data.name;
@@ -68,12 +67,9 @@ io.sockets.on('connection', function (socket) {
     	io.sockets.emit('updateOnline', users);
     });
     socket.on('disconnect', function() {
-  //   	var i = online.indexOf(socket.name);
-  //   	if (i > -1) {
-  //   		online.splice(i, 1);
-		// }
         if (users.hasOwnProperty(socket.name)) {
             delete users[socket.name];
+            // io.sockets.socket(client).emit('userDisconnect');
     		io.sockets.emit('message', {message: '<b>' + socket.name + '</b>' + ' has disconnected.'});
         	io.sockets.emit('updateOnline', users);
         }
