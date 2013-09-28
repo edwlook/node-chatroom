@@ -1,20 +1,21 @@
 var helper = {
 			bold: function(str) {return '<b>' + str + '</b>';}
-		}
+}
 var socket = io.connect(window.location.origin, {
 	'sync disconnect on unload': true
 });
-var online = document.getElementById('online');
-var userList = document.getElementById('userList');
-var loginForm = document.getElementById('loginForm');
-var chat = document.getElementById('chat');
-var msgForm = document.getElementById('msgForm');
-var messageBox = document.getElementById('messageBox');
-var msgButton = document.getElementById('msgButton');
-var nick = document.getElementById('nick');
-var field = document.getElementById('field');
-var pw = document.getElementById('pw');
-var sound = new Audio('/sound/chat.mp3');
+var online = document.getElementById('online'),
+	userList = document.getElementById('userList'),
+	loginForm = document.getElementById('loginForm'),
+	chat = document.getElementById('chat'),
+	msgForm = document.getElementById('msgForm'),
+	messageBox = document.getElementById('messageBox'),
+	msgButton = document.getElementById('msgButton'),
+	nick = document.getElementById('nick'),
+	field = document.getElementById('field'),
+	pw = document.getElementById('pw'),
+	sound = new Audio('/sound/chat.mp3')
+
 nick.focus();
 var messages = [];
 
@@ -31,12 +32,6 @@ socket.on('updateOnline', function(data) {
 socket.on('playSound', function() {
 	sound.play();
 });
-
-var auth = function() {
-	var name = nick.value;
-	var pass = pw.value;
-	socket.emit('auth', {pass: pass, name: name});
-};
 
 socket.on('authSuccess', function() {
 	join();
@@ -62,6 +57,17 @@ socket.on('authFail', function() {
 		window.location = "http://www.google.com";
 	}, 3000)
 });
+
+var auth = function() {
+	var name = nick.value;
+	var pass = pw.value;
+	if (name.replace(/\s+/g, '') == '') {
+		alert('Please enter a name.');
+	} else {
+		socket.emit('auth', {pass: pass, name: name});
+	}
+	
+};
 var join = function() {
 		var name = nick.value;
 		loginForm.style.display = 'none';
