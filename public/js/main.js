@@ -2,7 +2,6 @@ var helper = {
 			bold: function(str) {return '<b>' + str + '</b>';}
 }
 var socket;
-
 var online = document.getElementById('online'),
 	userList = document.getElementById('userList'),
 	loginForm = document.getElementById('loginForm'),
