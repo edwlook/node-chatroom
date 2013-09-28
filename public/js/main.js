@@ -77,12 +77,12 @@ var join = function() {
 		socket.emit('join', {name: name});
 };
 var sendMsg = function() {
-	socket.emit('newMessage');
 	var msg = field.value;
 	var name = nick.value;
-	if (name == '') {
-		alert('Please enter a name!');
+	if (msg.replace(/\s+/g, '') == '') {
+		return false;
 	} else {
+		socket.emit('newMessage');
 		socket.emit('send', {message: helper.bold(name) + ': ' + msg});
 		field.value = '';
 	}
