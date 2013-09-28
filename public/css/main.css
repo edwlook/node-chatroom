@@ -2,6 +2,9 @@
 	
 }
 
+#field {
+	padding: 4px;
+}
 #userList {
 	padding: 0px;
 	height: 300px;
