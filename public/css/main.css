@@ -1,0 +1,30 @@
+#msgForm {
+	
+}
+
+#userList {
+	padding: 0px;
+	height: 300px;
+	border-top: 1px solid;
+	text-align: center;
+	overflow: auto;
+	/*border-right: 1px solid;*/
+}
+#chat {
+	display: none;
+}
+
+#messageBox {
+	word-wrap: break-word;
+	padding: 0px;
+	/*margin-bottom: 5px;*/
+	overflow: auto;
+	height: 300px;
+	border-top: 1px solid;
+}
+
+.line {
+
+border-left: thick solid #ff0000
+
+}

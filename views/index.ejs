@@ -1,115 +1,44 @@
 <!DOCTYPE html>
 <html>
-  <head>
-  	<title>Prank Howe!</title>
-    <script type="text/javascript" src="/socket.io/socket.io.js">
-    </script>
+	<head>
+		<title>Freeborn Chat</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="css/main.css" rel="stylesheet" media="screen">
+		<link href="css/signin.css" rel="stylesheet">
+	</head>
 
-  </head>
-  <body>
-  	<h2 id="title">Freeborn Chat (0.0.3)</h2>
-  	<span id="nameForm">
-  		<form onsubmit="auth(); return false;">
-  			Enter your name: <input id="nick" type="text" placeholder="Name.."><br>
-  		
-  		</form>	
-  	</span>
-  	<span id="msgForm" style="display:none">
-  		Online: <span id="online"></span>
-  			<form onsubmit="sendMsg(); return false;">
-			<input id="field" type="text" placeholder="Your message..">
-			<input type="submit" id="msgButton" value="Send"><br>
-		</form>
-		<br><span id="message"></span>
-	</span>
-  	    
+	<body>
+		<div id="loginForm" class="container">
+			<form class="form-signin" onsubmit="auth(); return false;">
+				<h2 class="form-signin-heading">Freeborn Chat</h2>
+				<input type="text" id="nick" class="form-control" placeholder="Name" autofocus>
+				<input type="password" id="pw" class="form-control" placeholder="Secret phrase?">
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Join chat</button>
+			</form>
+		</div>
 
-	<script type="text/javascript">
+	  	<div id="chat" class="container">
+			<h2 id="title">Freeborn Chat</h2><br />
 
-		var helper = {
-			bold: function(str) {return '<b>' + str + '</b>';}
-		}
-		var socket = io.connect(window.location.origin, {
-			'sync disconnect on unload': true
-		});
-		var online = document.getElementById('online');
-		var nameForm = document.getElementById('nameForm');
-		var msgForm = document.getElementById('msgForm');
-		var chatBox = document.getElementById('message');
-		var msgButton = document.getElementById('msgButton');
-		var nick = document.getElementById('nick');
-		var field = document.getElementById('field');
-		var sound = new Audio('/sound/chat.mp3');
-		nick.focus();
-		var messages = [];
+	  		<div id="userList"class="col-lg-2"></div>
 
-		socket.on('updateOnline', function(data) {
-			var html = '';
-				data.forEach(function(el) {
-					if (el == data[data.length-1]) {
-						html += el;
-					} else {
-						html += el + ', ';
-					}
-				});
-			online.innerHTML = html;
-		});
+		  	<div id="msgForm" class="col-lg-6">
+				<div id="messageBox" class="col-lg-12"></div>
+		  		<form class="" onsubmit="sendMsg(); return false;">
+		  			<div class="input-group">
+						<input id="field" class="form-control" type="text" placeholder="Your message..">
+						<span class="input-group-btn">
+							<button id="msgButton" class="btn btn-default" type="submit">Say</button>
+						</span>
+					</div>
+				</form>
+				<br/>
+			</div>
+	  	</div>
 
-		socket.on('playSound', function() {
-			sound.play();
-		});
+	    <script src="/socket.io/socket.io.js"></script>
+		<script src="js/main.js"></script>
+	</body>
 
-		var auth = function() {
-			var name = nick.value;
-			var pass = prompt("Enter the secret phrase: ", "");
-			socket.emit('auth', {pass: pass, name: name});
-		};
-
-		socket.on('authSuccess', function() {
-			join();
-			socket.on('message', function (data) {
-				if (data.message) {
-					messages.push(data.message);
-					var html = '';
-					for (var i=0; i<messages.length; i++) {
-				    	html += messages[i] + '<br />';
-					}
-					chatBox.innerHTML = html;
-				}
-			});
-		});
-
-		socket.on('authFail', function() {
-			document.body.innerHTML = "<h1>You shouldn't be here.</h1>";
-			window.setTimeout(function() {
-				window.location = "http://www.google.com";
-			}, 3000)
-		});
-		var join = function() {
-			// if (name == '' || pass != 'hashtagyolo') {
-			// 	document.body.innerHTML = '<h1>Why are you even here?</h1>';
-			// } else {
-				var name = nick.value;
-				msgForm.style.display = 'block';
-				title.innerHTML = 'Prank Howe!';
-				nameForm.innerHTML = 'Name: ' + helper.bold(name);
-				field.focus();
-				socket.emit('send', {message: helper.bold(name) + ' has joined the chat.'});
-				socket.emit('join', {name: name});
-			// }
-		};
-		var sendMsg = function() {
-			socket.emit('newMessage');
-			var msg = field.value;
-			var name = nick.value;
-			if (name == '') {
-				alert('Please enter a name!');
-			} else {
-				socket.emit('send', {message: helper.bold(name) + ': ' + msg});
-				field.value = '';
-			}
-		};
-
-	</script>
-  </body>
 </html>
