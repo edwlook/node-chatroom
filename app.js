@@ -35,7 +35,7 @@ app.get('/', index.index);
 var online = [];
 var users = {};
 var pass = '';
-if (process.argv[2] == 'prod') {pass = 'ENTER_PASS_HERE'}
+if (process.argv[2] == 'prod') {pass = 'noderocks'}
 
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
