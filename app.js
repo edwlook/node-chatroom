@@ -67,9 +67,9 @@ io.sockets.on('connection', function (socket) {
     	io.sockets.emit('updateOnline', users);
     });
     socket.on('disconnect', function() {
+        // io.sockets.socket(client).emit('userDisconnect');
         if (users.hasOwnProperty(socket.name)) {
             delete users[socket.name];
-            // io.sockets.socket(client).emit('userDisconnect');
     		io.sockets.emit('message', {message: '<b>' + socket.name + '</b>' + ' has disconnected.'});
         	io.sockets.emit('updateOnline', users);
         }
