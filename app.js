@@ -2,14 +2,10 @@
 /**
  * Module dependencies.
  */
-
-var express = require('express');
-
-var index = require('./routes');
-var login = require('./routes/login.js');
-
 var http = require('http');
 var path = require('path');
+var express = require('express');
+var index = require('./routes');
 
 //express + socket.io Server
 var app = express();
@@ -33,14 +29,13 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', index.index);
-app.get('/login', login.index);
 
 //Socket.io
 /******************************************************/
 var online = [];
 var users = {};
 var pass = '';
-if (process.argv[2] == 'prod') {pass = 'hashtagyolo'}
+if (process.argv[2] == 'prod') {pass = 'ENTER_PASS_HERE'}
 
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
